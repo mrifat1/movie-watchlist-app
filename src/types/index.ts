@@ -14,6 +14,14 @@ export interface User {
   createdAt: string;
 }
 
+export interface ApiResponse<T> {
+  status: number;
+  data: T;
+}
+
+export type MovieListResponse = ApiResponse<Movie[]>;
+export type SingleMovieResponse = ApiResponse<Movie>;
+export type watchlistResponse = ApiResponse<WatchlistItem[]>;
 export interface Movie {
   id: string;
   title: string;

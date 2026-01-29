@@ -1,16 +1,20 @@
 import api from './config';
-import { Movie, CreateMovieRequest } from '../types';
+import { Movie, CreateMovieRequest, MovieListResponse, SingleMovieResponse } from '../types';
 
 export const moviesService = {
+  async getAllMovies(): Promise<Movie[]> {
+    const response = await api.get<MovieListResponse>('/movies/getAllMovies');
+    return response.data.data;
+  },
   async getMovies(search?: string): Promise<Movie[]> {
     const params = search ? { search } : {};
-    const response = await api.get<Movie[]>('/movies', { params });
-    return response.data;
+    const response = await api.get<MovieListResponse>('/movies', { params });
+    return response.data.data;
   },
 
   async getMovie(id: string): Promise<Movie> {
-    const response = await api.get<Movie>(`/movies/${id}`);
-    return response.data;
+    const response = await api.get<SingleMovieResponse>(`/movies/getMovie/${id}`);
+    return response.data.data;
   },
 
   async createMovie(movieData: CreateMovieRequest): Promise<Movie> {

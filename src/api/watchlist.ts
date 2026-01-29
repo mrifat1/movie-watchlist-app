@@ -1,10 +1,12 @@
 import api from './config';
-import { WatchlistItem, CreateWatchlistItemRequest, UpdateWatchlistItemRequest } from '../types';
+import { WatchlistItem, CreateWatchlistItemRequest, UpdateWatchlistItemRequest, watchlistResponse } from '../types';
 
 export const watchlistService = {
   async getWatchlist(): Promise<WatchlistItem[]> {
-    const response = await api.get<WatchlistItem[]>('/watchlist');
-    return response.data;
+    const response = await api.get<watchlistResponse>('/watchlist/getAllWatchlist');
+    console.log("Watchlist data:aa", response.data);
+    
+    return response.data.data;
   },
 
   async getWatchlistItem(id: string): Promise<WatchlistItem> {
@@ -13,8 +15,10 @@ export const watchlistService = {
   },
 
   async addToWatchlist(data: CreateWatchlistItemRequest): Promise<WatchlistItem> {
-    const response = await api.post<WatchlistItem>('/watchlist', data);
-    return response.data;
+      const response = await api.post('/watchlist/addToWatchlist', data);
+      // Backend returns: { status: "Success", data: { watchlistItem } }
+      return response.data.data.watchlistItem;
+    
   },
 
   async updateWatchlistItem(

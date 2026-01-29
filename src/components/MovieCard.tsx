@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Movie } from '../types';
+import React from "react";
+import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import { Movie } from "../types";
 
 interface MovieCardProps {
   movie: Movie;
@@ -59,12 +59,12 @@ export const MovieCard: React.FC<MovieCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    backgroundColor: '#fff',
+    flexDirection: "row",
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -76,37 +76,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   placeholderPoster: {
-    backgroundColor: '#e0e0e0',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#e0e0e0",
+    justifyContent: "center",
+    alignItems: "center",
   },
   placeholderText: {
-    color: '#999',
+    color: "#999",
     fontSize: 12,
   },
   info: {
     flex: 1,
     marginLeft: 12,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   title: {
     fontSize: 16,
-    fontWeight: '700',
-    color: '#333',
+    fontWeight: "700",
+    color: "#333",
     marginBottom: 4,
   },
   year: {
     fontSize: 14,
-    color: '#666',
+    color: "#666",
     marginBottom: 6,
   },
   genresContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     marginBottom: 4,
   },
   genreBadge: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 12,
@@ -114,26 +114,26 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   genreText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   runtime: {
     fontSize: 12,
-    color: '#999',
+    color: "#999",
   },
   addButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
   },
   addButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

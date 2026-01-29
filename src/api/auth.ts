@@ -9,7 +9,7 @@ export const authService = {
     
     await AsyncStorage.setItem('authToken', responseData.data.token);
     await AsyncStorage.setItem('user', JSON.stringify(responseData.data.user));
-    return response.data;
+    return responseData.data;
   },
 
   async register(userData: RegisterRequest): Promise<AuthResponse> {

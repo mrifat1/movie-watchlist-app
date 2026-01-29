@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   Text,
@@ -8,19 +8,22 @@ import {
   RefreshControl,
   Alert,
   TouchableOpacity,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { MovieCard } from '../components/MovieCard';
-import { Input } from '../components/Input';
-import { moviesService } from '../api/movies';
-import { watchlistService } from '../api/watchlist';
-import { Movie } from '../types';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { MovieCard } from "../components/MovieCard";
+import { Input } from "../components/Input";
+import { moviesService } from "../api/movies";
+import { watchlistService } from "../api/watchlist";
+import { CreateWatchlistItemRequest, Movie, WatchlistStatus } from "../types";
+import { AddToWatchlistModal } from "../components/Modals/watchListModal";
 
 export const MoviesScreen = ({ navigation }: any) => {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
   useEffect(() => {
     loadMovies();
@@ -28,10 +31,12 @@ export const MoviesScreen = ({ navigation }: any) => {
 
   const loadMovies = async () => {
     try {
-      const data = await moviesService.getMovies(searchQuery);
-      setMovies(data);
+      const data = await moviesService.getAllMovies();
+      console.log("holaaaaa", data);
+
+      setMovies(data?.movies);
     } catch (error) {
-      Alert.alert('Error', 'Failed to load movies');
+      Alert.alert("Error", "Failed to load movies");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -48,26 +53,39 @@ export const MoviesScreen = ({ navigation }: any) => {
     loadMovies();
   }, [searchQuery]);
 
-  const handleAddToWatchlist = async (movieId: string) => {
+  const openWatchlistModal = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setModalVisible(true);
+  };
+
+  const handleAddToWatchlist = async (listItem: CreateWatchlistItemRequest) => {
     try {
-      await watchlistService.addToWatchlist({ movieId });
-      Alert.alert('Success', 'Added to watchlist!');
+      await watchlistService.addToWatchlist(listItem);
+      Alert.alert("Success", "Movie added to watchlist!");
+      setModalVisible(false);
+      setSelectedMovie(null);
     } catch (error: any) {
+      console.log("handleAddToWatchlist", error);
+
       Alert.alert(
-        'Error',
-        error.response?.data?.message || 'Failed to add to watchlist'
+        "Error",
+        error.response?.data?.message || "Failed to add to watchlist",
       );
     }
   };
 
-  const renderItem = ({ item }: { item: Movie }) => (
-    <MovieCard
-      movie={item}
-      onPress={() => navigation.navigate('MovieDetail', { movieId: item.id })}
-      showAddButton
-      onAddToWatchlist={() => handleAddToWatchlist(item.id)}
-    />
-  );
+  const renderItem = ({ item }: { item: Movie }) => {
+    return (
+      <MovieCard
+        movie={item}
+        onPress={() =>
+          navigation.navigate("MovieDetails", { movieId: item.id })
+        }
+        showAddButton
+        onAddToWatchlist={() => openWatchlistModal(item)}
+      />
+    );
+  };
 
   if (loading && !refreshing) {
     return (
@@ -111,10 +129,20 @@ export const MoviesScreen = ({ navigation }: any) => {
 
       <TouchableOpacity
         style={styles.fab}
-        onPress={() => navigation.navigate('AddMovie')}
+        onPress={() => navigation.navigate("AddMovie")}
       >
         <Ionicons name="add" size={32} color="#fff" />
       </TouchableOpacity>
+
+      <AddToWatchlistModal
+        visible={modalVisible}
+        movie={selectedMovie}
+        onClose={() => {
+          setModalVisible(false);
+          setSelectedMovie(null);
+        }}
+        onSubmit={handleAddToWatchlist}
+      />
     </View>
   );
 };
@@ -122,34 +150,34 @@ export const MoviesScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: "#e0e0e0",
   },
   searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   searchInput: {
     flex: 1,
     marginBottom: 0,
   },
   searchButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: "#007AFF",
     width: 50,
     height: 50,
     borderRadius: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginLeft: 8,
   },
   list: {
@@ -157,25 +185,25 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 40,
   },
   emptyText: {
     fontSize: 16,
-    color: '#999',
+    color: "#999",
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     right: 20,
     bottom: 20,
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#007AFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 4,
