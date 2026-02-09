@@ -22,6 +22,8 @@ export interface ApiResponse<T> {
 export type MovieListResponse = ApiResponse<Movie[]>;
 export type SingleMovieResponse = ApiResponse<Movie>;
 export type watchlistResponse = ApiResponse<WatchlistItem[]>;
+export type watchListItemResponse = ApiResponse<WatchlistItem>;
+
 export interface Movie {
   id: string;
   title: string;

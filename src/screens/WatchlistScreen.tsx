@@ -72,7 +72,7 @@ export const WatchlistScreen = ({ navigation }: any) => {
       <WatchlistCard
         item={item}
         onPress={() =>
-          navigation.navigate("WatchlistDetail", { itemId: item.id })
+          navigation.navigate("WatchlistDetail", { itemId: item.movieId })
         }
       />
     );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,26 +7,28 @@ import {
   Alert,
   ActivityIndicator,
   TouchableOpacity,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { Input } from '../components/Input';
-import { Button } from '../components/Button';
-import { watchlistService } from '../api/watchlist';
-import { WatchlistItem, WatchlistStatus } from '../types';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { Input } from "../components/Input";
+import { Button } from "../components/Button";
+import { watchlistService } from "../api/watchlist";
+import { WatchlistItem, WatchlistStatus } from "../types";
 
 const STATUS_OPTIONS = [
-  { label: 'Plan to Watch', value: WatchlistStatus.PLANNED },
-  { label: 'Watching', value: WatchlistStatus.WATCHING },
-  { label: 'Completed', value: WatchlistStatus.COMPLETED },
-  { label: 'Dropped', value: WatchlistStatus.DROPPED },
+  { label: "Plan to Watch", value: WatchlistStatus.PLANNED },
+  { label: "Watching", value: WatchlistStatus.WATCHING },
+  { label: "Completed", value: WatchlistStatus.COMPLETED },
+  { label: "Dropped", value: WatchlistStatus.DROPPED },
 ];
 
 export const WatchlistDetailScreen = ({ route, navigation }: any) => {
   const { itemId } = route.params;
   const [item, setItem] = useState<WatchlistItem | null>(null);
-  const [status, setStatus] = useState<WatchlistStatus>(WatchlistStatus.PLANNED);
-  const [rating, setRating] = useState('');
-  const [notes, setNotes] = useState('');
+  const [status, setStatus] = useState<WatchlistStatus>(
+    WatchlistStatus.PLANNED,
+  );
+  const [rating, setRating] = useState("");
+  const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -37,12 +39,19 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
   const loadItem = async () => {
     try {
       const data = await watchlistService.getWatchlistItem(itemId);
-      setItem(data);
-      setStatus(data.status);
-      setRating(data.rating?.toString() || '');
-      setNotes(data.notes || '');
-    } catch (error) {
-      Alert.alert('Error', 'Failed to load item');
+      console.log("Watchlist item data:", data);
+
+      setItem(data.data);
+      setStatus(data.data.status);
+      setRating(data.data.rating?.toString() || "");
+      setNotes(data.data.notes || "");
+    } catch (error: any) {
+      console.log("loadItem error:", error?.response?.data?.message);
+
+      Alert.alert(
+        "Error",
+        error?.response?.data?.message || "Failed to load item",
+      );
       navigation.goBack();
     } finally {
       setLoading(false);
@@ -52,7 +61,7 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
   const handleSave = async () => {
     const ratingNum = rating ? parseInt(rating) : undefined;
     if (rating && (isNaN(ratingNum!) || ratingNum! < 1 || ratingNum! > 10)) {
-      Alert.alert('Error', 'Rating must be between 1 and 10');
+      Alert.alert("Error", "Rating must be between 1 and 10");
       return;
     }
 
@@ -63,14 +72,11 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
         rating: ratingNum,
         notes: notes || undefined,
       });
-      Alert.alert('Success', 'Updated successfully!', [
-        { text: 'OK', onPress: () => navigation.goBack() },
+      Alert.alert("Success", "Updated successfully!", [
+        { text: "OK", onPress: () => navigation.goBack() },
       ]);
     } catch (error: any) {
-      Alert.alert(
-        'Error',
-        error.response?.data?.message || 'Failed to update'
-      );
+      Alert.alert("Error", error.response?.data?.message || "Failed to update");
     } finally {
       setSaving(false);
     }
@@ -78,23 +84,23 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
 
   const handleDelete = () => {
     Alert.alert(
-      'Remove from Watchlist',
-      'Are you sure you want to remove this item?',
+      "Remove from Watchlist",
+      "Are you sure you want to remove this item?",
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Remove',
-          style: 'destructive',
+          text: "Remove",
+          style: "destructive",
           onPress: async () => {
             try {
               await watchlistService.removeFromWatchlist(itemId);
               navigation.goBack();
             } catch (error) {
-              Alert.alert('Error', 'Failed to remove item');
+              Alert.alert("Error", "Failed to remove item");
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -117,7 +123,7 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Status</Text>
-        {STATUS_OPTIONS.map(option => (
+        {STATUS_OPTIONS.map((option) => (
           <TouchableOpacity
             key={option.value}
             style={[
@@ -168,7 +174,11 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
       <View style={styles.buttonContainer}>
         <Button title="Save Changes" onPress={handleSave} loading={saving} />
         <View style={styles.spacer} />
-        <Button title="Remove from Watchlist" onPress={handleDelete} variant="danger" />
+        <Button
+          title="Remove from Watchlist"
+          onPress={handleDelete}
+          variant="danger"
+        />
       </View>
     </ScrollView>
   );
@@ -177,70 +187,70 @@ export const WatchlistDetailScreen = ({ route, navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
   centered: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     padding: 20,
   },
   movieInfo: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
     borderRadius: 12,
     marginBottom: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   movieTitle: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#333',
-    textAlign: 'center',
+    fontWeight: "700",
+    color: "#333",
+    textAlign: "center",
     marginBottom: 8,
   },
   movieYear: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
   },
   section: {
     marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: "600",
+    color: "#333",
     marginBottom: 12,
   },
   statusOption: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 16,
     borderRadius: 8,
     marginBottom: 8,
     borderWidth: 2,
-    borderColor: 'transparent',
+    borderColor: "transparent",
   },
   statusOptionSelected: {
-    borderColor: '#007AFF',
+    borderColor: "#007AFF",
   },
   statusOptionContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   statusOptionText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   statusOptionTextSelected: {
-    fontWeight: '600',
-    color: '#007AFF',
+    fontWeight: "600",
+    color: "#007AFF",
   },
   textArea: {
     height: 120,
-    textAlignVertical: 'top',
+    textAlignVertical: "top",
   },
   buttonContainer: {
     marginTop: 20,
